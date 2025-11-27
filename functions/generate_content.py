@@ -1,5 +1,6 @@
 from google.genai import types
 from config import system_prompt, available_functions
+from functions.call_function import call_function
 
 def generate_content(client, prompt: str, verbose: bool) -> None:
     messages = [types.Content(role = "user", parts=[types.Part(text = prompt)])]
@@ -11,11 +12,14 @@ def generate_content(client, prompt: str, verbose: bool) -> None:
         system_instruction=system_prompt,
         )
     )
-    if response.function_calls:
-        for function_call in response.function_calls:
-            print(f"Calling function: {function_call.name}{function_call.args}")
-    else:
-        print(response.text)
-    if verbose and response.usage_metadata:
-        print(f'Prompt tokens: {usage_metadata.prompt_token_count}')
-        print(f'Response tokens: {usage_metadata.candidates_token_count}')    
+
+    my_list = []
+    for function_call in response.function_calls:
+        function_call_result = call_function(function_call, verbose=verbose)
+        if len(function_call_result.parts) == 0:
+            raise Exception
+        my_list.append(function_call_result.parts[0])
+    
+        if verbose:
+            print(f"-> {function_call_result.parts[0].function_response.response}")
+           

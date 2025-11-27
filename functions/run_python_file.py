@@ -16,16 +16,15 @@ def run_python_file(working_directory, file_path, args=[]):
         args = []
     try:
         cmd = ['python', file_path] + list(args)
-        
         completed = subprocess.run(cmd, timeout=30, 
                     capture_output=True, 
                     cwd=abs_working_dir, 
                     text=True)
-        
+
         stdout = completed.stdout or ""
         stderr = completed.stderr or ""
 
-        if not stdout and stderr:
+        if not stdout and not stderr:
             return "No output produced"
         result = f"STDOUT: {stdout}\n"+ f"STDERR: {stderr}"
         if completed.returncode != 0:
