@@ -15,6 +15,7 @@ When a user asks a question or makes a request, make a function call plan. You c
 - Write or overwrite files
 
 All paths you provide should be relative to the working directory. You do not need to specify the working directory in your function calls as it is automatically injected for security reasons.
+When you have all of the information you need STOP making function calls and provide a final answer to the user's initial question.
 """
 
 available_functions = types.Tool(
